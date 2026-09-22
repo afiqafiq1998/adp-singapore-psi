@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+```
+<title>North Singapore Live 24HR PSI</title>
+
+<style>
+
+    :root {
+        --bg-color: #f4f7f6;
+        --card-bg: #ffffff;
+        --text-main: #333333;
+        --text-muted: #666666;
+        --accent: #0076a3;
+        --border-radius: 28px;
+    }
+
+    * {
+        box-sizing: border-box;
+        outline: none !important;
+    }
+
+    html,
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+
+        font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Helvetica,
+            Arial,
+            sans-serif;
+
+        background: var(--bg-color);
+        color: var(--text-main);
+
+        overflow: hidden;
+    }
+
+
+    /*
+     * ==========================================
+     * MAIN TV LAYOUT
+     * ==========================================
+     */
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 100vh;
+        padding: 50px;
+    }
+
+
+    .container {
+        width: 100%;
+        max-width: 1200px;
+
+        text-align: center;
+    }
+
+
+    /*
+     * ==========================================
+     * HEADER
+     * ==========================================
+     */
+
+    header {
+        margin-bottom: 35px;
+    }
+
+
+    h1 {
+        margin: 0;
+
+        font-size: clamp(
+            40px,
+            4vw,
+            64px
+        );
+
+        font-weight: 700;
+
+        color: var(--accent);
+
+        letter-spacing: 1px;
+    }
+
+
+    .subtitle {
+        margin-top: 10px;
+
+        font-size: clamp(
+            20px,
+            2vw,
+            30px
+        );
+
+        color: var(--text-muted);
+    }
+
+
+    /*
+     * ==========================================
+     * PSI CARD
+     * ==========================================
+     */
+
+    .psi-card {
+        background: var(--card-bg);
+
+        border-radius: var(--border-radius);
+
+        padding: 60px 40px;
+
+        box-shadow:
+            0 15px 40px
+            rgba(0, 0, 0, 0.08);
+
+        border:
+            1px solid
+            rgba(0, 0, 0, 0.04);
+    }
+
+
+    .region-name {
+        font-size: clamp(
+            26px,
+            2.5vw,
+            40px
+        );
+
+        font-weight: 700;
+
+        text-transform: uppercase;
+
+        letter-spacing: 4px;
+
+        color: var(--text-muted);
+
+        margin-bottom: 20px;
+    }
+
+
+    /*
+     * ==========================================
+     * PSI NUMBER
+     * ==========================================
+     */
+
+    .psi-value {
+        font-size: clamp(
+            160px,
+            18vw,
+            300px
+        );
+
+        font-weight: 800;
+
+        line-height: 0.9;
+
+        margin: 0 0 35px;
+
+        transition:
+            color 0.4s ease;
+    }
+
+
+    .loading {
+        color: var(--text-muted);
+    }
+
+
+    /*
+     * PSI COLOURS
+     */
+
+    .psi-good {
+        color: #28a745;
+    }
+
+
+    .psi-moderate {
+        color: #e0a800;
+    }
+
+
+    .psi-unhealthy {
+        color: #dc3545;
+    }
+
+
+    .psi-very-unhealthy {
+        color: #8e44ad;
+    }
+
+
+    .psi-hazardous {
+        color: #343a40;
+    }
+
+
+    /*
+     * ==========================================
+     * STATUS
+     * ==========================================
+     */
+
+    .status-badge {
+        display: inline-block;
+
+        padding: 12px 35px;
+
+        border-radius: 50px;
+
+        font-size: clamp(
+            24px,
+            2.5vw,
+            38px
+        );
+
+        font-weight: 700;
+    }
+
+
+    .status-good {
+        background: #d4edda;
+        color: #155724;
+    }
+
+
+    .status-moderate {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+
+    .status-unhealthy {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+
+    .status-very-unhealthy {
+        background: #e8d7f5;
+        color: #5a189a;
+    }
+
+
+    .status-hazardous {
+        background: #343a40;
+        color: #ffffff;
+    }
+
+
+    /*
+     * ==========================================
+     * INFORMATION BELOW CARD
+     * ==========================================
+     */
+
+    .info {
+        margin-top: 30px;
+
+        display: flex;
+
+        justify-content: center;
+
+        gap: 50px;
+
+        flex-wrap: wrap;
+
+        font-size: clamp(
+            18px,
+            1.5vw,
+            26px
+        );
+
+        color: var(--text-muted);
+    }
+
+
+    .info-item {
+        white-space: nowrap;
+    }
+
+
+    .info-label {
+        font-weight: 600;
+    }
+
+
+    /*
+     * ==========================================
+     * ERROR
+     * ==========================================
+     */
+
+    .error-message {
+        display: none;
+
+        margin-top: 25px;
+
+        padding: 15px 20px;
+
+        border-radius: 10px;
+
+        background: #f8d7da;
+
+        color: #721c24;
+
+        font-size: 18px;
+    }
+
+
+    /*
+     * ==========================================
+     * SMALLER SCREENS
+     * ==========================================
+     */
+
+    @media (max-width: 700px) {
+
+        body {
+            padding: 20px;
+        }
+
+        .psi-card {
+            padding: 40px 20px;
+        }
+
+        .info {
+            gap: 15px;
+        }
+
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+```
+<div class="container">
+
+
+    <!-- ======================================
+         HEADER
+    ======================================= -->
+
+    <header>
+
+        <h1>
+            NORTH SINGAPORE
+        </h1>
+
+        <div class="subtitle">
+            24-Hour PSI
+        </div>
+
+    </header>
+
+
+    <!-- ======================================
+         PSI CARD
+    ======================================= -->
+
+    <div class="psi-card">
+
+        <div class="region-name">
+            North
+        </div>
+
+
+        <div
+            id="psi-north"
+            class="psi-value loading"
+        >
+            --
+        </div>
+
+
+        <div
+            id="band-north"
+            class="status-badge status-moderate"
+        >
+            Loading...
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         INFORMATION
+    ======================================= -->
+
+    <div class="info">
+
+        <div class="info-item">
+
+            <span class="info-label">
+                NEA updated:
+            </span>
+
+            <span id="update-timestamp">
+                Loading...
+            </span>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <span class="info-label">
+                Next refresh:
+            </span>
+
+            <span id="countdown">
+                30:00
+            </span>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <span class="info-label">
+                Singapore time:
+            </span>
+
+            <span id="clock">
+                --:--:--
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ======================================
+         ERROR MESSAGE
+    ======================================= -->
+
+    <div
+        id="error-banner"
+        class="error-message"
+    ></div>
+
+
+</div>
+
+
+<script>
+
+
+    /*
+     * ==========================================
+     * SETTINGS
+     * ==========================================
+     */
+
+    const API_URL =
+        'https://api.data.gov.sg/v1/environment/psi';
+
+
+    /*
+     * Refresh every 30 minutes.
+     */
+
+    const REFRESH_INTERVAL =
+        30 * 60 * 1000;
+
+
+    /*
+     * Stores the next refresh time.
+     */
+
+    let nextRefreshTime =
+        Date.now() + REFRESH_INTERVAL;
+
+
+
+    /*
+     * ==========================================
+     * PSI STATUS
+     * ==========================================
+     */
+
+    function getStatusInfo(value) {
+
+
+        if (value <= 50) {
+
+            return {
+                text: 'GOOD',
+                badgeClass: 'status-good',
+                psiClass: 'psi-good'
+            };
+
+        }
+
+
+        if (value <= 100) {
+
+            return {
+                text: 'MODERATE',
+                badgeClass: 'status-moderate',
+                psiClass: 'psi-moderate'
+            };
+
+        }
+
+
+        if (value <= 200) {
+
+            return {
+                text: 'UNHEALTHY',
+                badgeClass: 'status-unhealthy',
+                psiClass: 'psi-unhealthy'
+            };
+
+        }
+
+
+        if (value <= 300) {
+
+            return {
+                text: 'VERY UNHEALTHY',
+                badgeClass: 'status-very-unhealthy',
+                psiClass: 'psi-very-unhealthy'
+            };
+
+        }
+
+
+        return {
+            text: 'HAZARDOUS',
+            badgeClass: 'status-hazardous',
+            psiClass: 'psi-hazardous'
+        };
+
+    }
+
+
+
+    /*
+     * ==========================================
+     * COUNTDOWN
+     * ==========================================
+     */
+
+    function updateCountdown() {
+
+
+        const countdown =
+            document.getElementById(
+                'countdown'
+            );
+
+
+        const remaining =
+            Math.max(
+                0,
+                nextRefreshTime -
+                Date.now()
+            );
+
+
+        const totalSeconds =
+            Math.floor(
+                remaining / 1000
+            );
+
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        countdown.textContent =
+            `${minutes}:${seconds
+                .toString()
+                .padStart(2, '0')}`;
+
+    }
+
+
+
+    /*
+     * ==========================================
+     * SINGAPORE CLOCK
+     * ==========================================
+     */
+
+    function updateClock() {
+
+
+        const clock =
+            document.getElementById(
+                'clock'
+            );
+
+
+        const now =
+            new Date();
+
+
+        clock.textContent =
+            now.toLocaleTimeString(
+                'en-SG',
+                {
+                    timeZone:
+                        'Asia/Singapore',
+
+                    hour: '2-digit',
+
+                    minute: '2-digit',
+
+                    second: '2-digit',
+
+                    hour12: false
+                }
+            );
+
+    }
+
+
+
+    /*
+     * ==========================================
+     * FETCH PSI
+     * ==========================================
+     */
+
+    async function fetchNorthPSIData() {
+
+
+        const errorBanner =
+            document.getElementById(
+                'error-banner'
+            );
+
+
+        const psiDisplay =
+            document.getElementById(
+                'psi-north'
+            );
+
+
+        const badgeDisplay =
+            document.getElementById(
+                'band-north'
+            );
+
+
+        const timestampDisplay =
+            document.getElementById(
+                'update-timestamp'
+            );
+
+
+        try {
+
+
+            const response =
+                await fetch(
+                    API_URL,
+                    {
+                        cache: 'no-store'
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `HTTP Error ${response.status}`
+                );
+
+            }
+
+
+            const payload =
+                await response.json();
+
+
+            /*
+             * Get readings
+             */
+
+            const readings =
+                payload?.items?.[0]?.readings;
+
+
+            const psiReadings =
+                readings?.psi_twenty_four_hourly;
+
+
+            if (!psiReadings) {
+
+                throw new Error(
+                    'PSI data was not found in the API response.'
+                );
+
+            }
+
+
+            /*
+             * Get North PSI
+             */
+
+            const northValue =
+                Number(
+                    psiReadings.north
+                );
+
+
+            if (!Number.isFinite(northValue)) {
+
+                throw new Error(
+                    'North PSI value is not numeric.'
+                );
+
+            }
+
+
+            /*
+             * ==================================
+             * DISPLAY PSI
+             * ==================================
+             */
+
+            psiDisplay.textContent =
+                Math.round(
+                    northValue
+                );
+
+
+            /*
+             * Remove loading class
+             */
+
+            psiDisplay.classList.remove(
+                'loading'
+            );
+
+
+            /*
+             * ==================================
+             * STATUS
+             * ==================================
+             */
+
+            const status =
+                getStatusInfo(
+                    northValue
+                );
+
+
+            /*
+             * Remove previous PSI colours
+             */
+
+            psiDisplay.classList.remove(
+                'psi-good',
+                'psi-moderate',
+                'psi-unhealthy',
+                'psi-very-unhealthy',
+                'psi-hazardous'
+            );
+
+
+            /*
+             * Apply new PSI colour
+             */
+
+            psiDisplay.classList.add(
+                status.psiClass
+            );
+
+
+            /*
+             * Update badge
+             */
+
+            badgeDisplay.textContent =
+                status.text;
+
+
+            badgeDisplay.className =
+                `status-badge ${status.badgeClass}`;
+
+
+            /*
+             * ==================================
+             * NEA UPDATE TIME
+             * ==================================
+             */
+
+            const updateTimestamp =
+                payload?.items?.[0]
+                    ?.update_timestamp;
+
+
+            if (updateTimestamp) {
+
+
+                const neaTime =
+                    new Date(
+                        updateTimestamp
+                    );
+
+
+                timestampDisplay.textContent =
+                    neaTime.toLocaleTimeString(
+                        'en-SG',
+                        {
+                            timeZone:
+                                'Asia/Singapore',
+
+                            hour: '2-digit',
+
+                            minute: '2-digit',
+
+                            hour12: false
+                        }
+                    );
+
+            }
+            else {
+
+                timestampDisplay.textContent =
+                    'Unavailable';
+
+            }
+
+
+            /*
+             * ==================================
+             * HIDE ERROR
+             * ==================================
+             */
+
+            errorBanner.style.display =
+                'none';
+
+
+            /*
+             * ==================================
+             * RESET COUNTDOWN
+             *
+             * Only reset after a successful
+             * PSI update.
+             * ==================================
+             */
+
+            nextRefreshTime =
+                Date.now() +
+                REFRESH_INTERVAL;
+
+
+            updateCountdown();
+
+
+            console.log(
+                `North 24HR PSI: ${northValue}`
+            );
+
+        }
+
+
+        catch (error) {
+
+
+            console.error(
+                'PSI API error:',
+                error
+            );
+
+
+            errorBanner.textContent =
+                `Unable to update PSI: ${error.message}`;
+
+
+            errorBanner.style.display =
+                'block';
+
+
+            /*
+             * Keep the previous PSI reading
+             * if one already exists.
+             */
+
+            if (
+                psiDisplay.textContent === '--' ||
+                psiDisplay.textContent === 'Error'
+            ) {
+
+                psiDisplay.textContent =
+                    'Error';
+
+
+                badgeDisplay.textContent =
+                    'Unavailable';
+
+
+                badgeDisplay.className =
+                    'status-badge status-unhealthy';
+
+            }
+
+        }
+
+    }
+
+
+
+    /*
+     * ==========================================
+     * INITIAL LOAD
+     * ==========================================
+     */
+
+    fetchNorthPSIData();
+
+
+
+    /*
+     * ==========================================
+     * AUTOMATIC REFRESH
+     * ==========================================
+     */
+
+    setInterval(
+        fetchNorthPSIData,
+        REFRESH_INTERVAL
+    );
+
+
+
+    /*
+     * ==========================================
+     * COUNTDOWN
+     * ==========================================
+     */
+
+    setInterval(
+        updateCountdown,
+        1000
+    );
+
+
+    /*
+     * ==========================================
+     * CLOCK
+     * ==========================================
+     */
+
+    setInterval(
+        updateClock,
+        1000
+    );
+
+
+    /*
+     * Start immediately.
+     */
+
+    updateCountdown();
+
+    updateClock();
+
+</script>
+```
+
+</body>
+</html>
